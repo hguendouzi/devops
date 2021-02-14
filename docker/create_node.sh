@@ -19,13 +19,13 @@ createNodes() {
 
 
 	for i in $(seq $min $max);do
-		docker run -tid --privileged --publish-all=true  --name $USER-debian-$i -h $USER-debian-$i debian:buster
+		docker run -tid --privileged --publish-all=true  --name $USER-debian-$i -h debian$i debian:buster
 		#create an user and home user
-        docker exec -ti $USER-debian-$i /bin/sh -c "useradd -m -p sa3tHJ3/KuYvI $USER"
+        docker exec -ti $USER-debian-$i /bin/sh -c "useradd -m -p frparis92 $USER"
         # authenticate ssh
 		docker exec -ti $USER-debian-$i /bin/sh -c "mkdir  ${HOME}/.ssh && chmod 700 ${HOME}/.ssh && chown $USER:$USER $HOME/.ssh"
-	docker cp $HOME/.ssh/id_rsa.pub $USER-debian-$i:$HOME/.ssh/authorized_keys
-	docker exec -ti $USER-debian-$i /bin/sh -c "chmod 600 ${HOME}/.ssh/authorized_keys && chown $USER:$USER $HOME/.ssh/authorized_keys"
+	    docker cp $HOME/.ssh/id_rsa.pub $USER-debian-$i:$HOME/.ssh/authorized_keys
+	    docker exec -ti $USER-debian-$i /bin/sh -c "chmod 600 ${HOME}/.ssh/authorized_keys && chown $USER:$USER $HOME/.ssh/authorized_keys"
 		docker exec -ti $USER-debian-$i /bin/sh -c "echo '$USER   ALL=(ALL) NOPASSWD: ALL'>>/etc/sudoers"
 		docker exec -ti $USER-debian-$i /bin/sh -c "service ssh start"
 		echo "Conteneur $USER-debian-$i created"
