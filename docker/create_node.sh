@@ -22,6 +22,9 @@ createNodes() {
 		docker run -tid --privileged --publish-all=true  --name $USER-debian-$i -h debian$i debian:buster
 		#create an user and home user
         docker exec -ti $USER-debian-$i /bin/sh -c "useradd -m -p frparis92 $USER"
+        docker exec -ti $USER-debian-$i /bin/sh -c "apt update"  
+        docker exec -ti $USER-debian-$i /bin/sh -c "apt install -y openssh-server" 
+        docker exec -ti $USER-debian-$i /bin/sh -c "apt install -y openssh-client"
         # authenticate ssh
 		docker exec -ti $USER-debian-$i /bin/sh -c "mkdir  ${HOME}/.ssh && chmod 700 ${HOME}/.ssh && chown $USER:$USER $HOME/.ssh"
 	    docker cp $HOME/.ssh/id_rsa.pub $USER-debian-$i:$HOME/.ssh/authorized_keys
@@ -39,6 +42,16 @@ dropNodes(){
 	echo "delete all container..."
 	docker rm -f $(docker ps -a | grep $USER-debian | awk '{print $1}')
 	echo "end delete all"
+}
+
+infosNodes(){
+	echo ""
+	echo "containers information : "
+	echo ""
+	for conteneur in $(docker ps -a | grep $USER-debian | awk '{print $1}');do      
+		docker inspect -f '   => {{.Name}} - {{.NetworkSettings.IPAddress }}' $conteneur
+	done
+	echo ""
 }
 
 
